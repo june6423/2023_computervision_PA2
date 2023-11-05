@@ -15,7 +15,7 @@ from func import *
 #eng = matlab.engine.start_matlab()
 
 initial_index = [3,4]
-ratio_test = 0.85
+ratio_test = 0.95
 datapath = os.getcwd() + '/Data/'
 infopath = os.getcwd() + '/two_view_recon_info/'
 
@@ -101,11 +101,15 @@ while(len(remaining)>0):
             memory.append(i)
     
     for idx,item in enumerate(good[best_index]):
-        key_points_index[0].append(item[0].trainIdx) #best_index의 key point index
-        key_points_index[1].append(inlinear[memory[item[0].queryIdx]][closest]) #closest의 key point index
-        is_matched[0][item[0].trainIdx] = idx
-        is_matched[1][inlinear[memory[item[0].queryIdx]][closest]] = idx
-        inlinear[memory[item[0].queryIdx]][best_index] = item[0].trainIdx
+        try:
+            key_points_index[0].append(item[0].trainIdx) #best_index의 key point index
+            key_points_index[1].append(inlinear[memory[item[0].queryIdx]][closest]) #closest의 key point index
+            is_matched[0][item[0].trainIdx] = idx
+            is_matched[1][inlinear[memory[item[0].queryIdx]][closest]] = idx
+            inlinear[memory[item[0].queryIdx]][best_index] = item[0].trainIdx
+        except:
+            print("error occured on query index",item[0].queryIdx,len(good[best_index]),len(memory))
+            continue
     camera_pose[best_index] = RANSAC(key_points[best_index], points_3d, key_points_index ,inlinear,is_3d[closest], best_index)
     matcher = cv2.BFMatcher().knnMatch(descriptor[closest], descriptor[best_index],k=2)
     good = []
