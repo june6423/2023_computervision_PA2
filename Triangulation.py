@@ -15,21 +15,26 @@ def Triangulation(key_points, camera_pose, closest, cur_index, key_points_index,
     pose2 = camera_pose[closest]
     
     for idx, item in enumerate(key_points_index[0]):
-        if item not in is_3d[closest]:
-            p1 = inv_camera_matrix @ np.append(key_points[cur_index][item],1)
-            p1 = p1[0:2]
-            p2 = inv_camera_matrix @ np.append(key_points[closest][key_points_index[1][idx]],1)
-            p2 = p2[0:2]
-            A = [p1[1]*pose1[2,:] - pose1[1,:],
-                 -p1[0]*pose1[2,:] + pose1[0,:],
-                    p2[1]*pose2[2,:] - pose2[1,:],
-                    -p2[0]*pose2[2,:] + pose2[0,:]]
-            A = np.array(A).reshape(4,4)
-            AA = A.T @ A
-            _, _, v = svd(AA)
-            
-            new_3d = v[-1,:3]/v[-1,-1]
-            new_3d.reshape(1,3)
+        p1 = inv_camera_matrix @ np.append(key_points[cur_index][item],1)
+        p1 = p1[0:2]
+        p2 = inv_camera_matrix @ np.append(key_points[closest][key_points_index[1][idx]],1)
+        p2 = p2[0:2]
+        A = [p1[1]*pose1[2,:] - pose1[1,:],
+                -p1[0]*pose1[2,:] + pose1[0,:],
+                p2[1]*pose2[2,:] - pose2[1,:],
+                -p2[0]*pose2[2,:] + pose2[0,:]]
+        A = np.array(A).reshape(4,4)
+        AA = A.T @ A
+        _, _, v = svd(AA)
+        
+        new_3d = v[-1,:3]/v[-1,-1]
+        new_3d.reshape(1,3)
+
+        if item in is_3d[closest]:
+            if(norm(points_3d[is_3d[closest][item]]-new_3d) < 5e-4):
+                inlinear.append({cur_index:key_points_index[0][idx]})
+                is_3d[cur_index][key_points_index[0][idx]] = is_3d[closest][item]
+        else:
             proj = camera_pose[closest] @ (np.append(new_3d,1))
             proj /= proj[-1]
             if(norm(proj -(np.append(p2,1))) < 5e-4):

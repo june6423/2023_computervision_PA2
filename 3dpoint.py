@@ -19,7 +19,7 @@ vertex_element = PlyElement.describe(vertices, 'vertex')
 plydata = PlyData([vertex_element])
 
 # Save the PLY file
-ply_file = 'new_output_1.ply'
+ply_file = '10000_output.ply'
 plydata.write(ply_file)
 
 print(f'PLY file saved as {ply_file}')

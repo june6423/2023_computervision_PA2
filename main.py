@@ -1,4 +1,4 @@
-import matlab.engine
+#import matlab.engine
 import cv2
 import os
 import numpy as np
@@ -15,7 +15,7 @@ from func import *
 #eng = matlab.engine.start_matlab()
 
 initial_index = [3,4]
-ratio_test = 0.95
+ratio_test = 0.85
 datapath = os.getcwd() + '/Data/'
 infopath = os.getcwd() + '/two_view_recon_info/'
 
@@ -35,7 +35,7 @@ matched = []
 
 matched.append(initial_index[0])
 del remaining[initial_index[0]]
-matched.append(initial_index[1]-1)
+matched.append(initial_index[1])
 del remaining[initial_index[1]-1]
 
 sift = cv2.SIFT_create()
@@ -73,7 +73,7 @@ for idx, item in enumerate(remaining):
     
 while(len(remaining)>0):
     matched_points = np.zeros(len(imglist))
-    good = [[] for i in range(len(remaining))]
+    good = [[] for i in range(len(imglist))]
     for idx in range(len(remaining)):
         matched_des = []
         closest = min(matched, key=lambda x: abs(x-remaining[idx]))
@@ -85,25 +85,29 @@ while(len(remaining)>0):
         matcher = cv2.BFMatcher().knnMatch(matched_des, descriptor[remaining[idx]],k=2)
         for m,n in matcher:
             if m.distance < ratio_test*n.distance:
-                good[idx].append([m])
-        matched_points[idx] = len(good[idx])
+                good[remaining[idx]].append([m])
+        matched_points[remaining[idx]] = len(good[remaining[idx]])
     best_index = matched_points.argmax()
-    print("Matched points",matched_points)
+    if best_index not in remaining:
+        print("NOT in remaining")
+        break
+    print("Matched points / best index ",best_index, matched_points)
     key_points_index = [[] for i in range(2)]
     is_matched = [{} for i in range(2)]
+    memory = []
     
-    closest = min(matched, key=lambda x: abs(x-remaining[idx]))
-    for idx,item in enumerate(good[remaining[best_index]]):
-        key_points_index[0].append(item[0].trainIdx)
-        try:
-            key_points_index[1].append(inlinear[item[0].queryIdx][closest])
-        except:
-            continue
+    for i in range(len(inlinear)):
+        if (closest in inlinear[i]):
+            memory.append(i)
+    
+    for idx,item in enumerate(good[best_index]):
+        key_points_index[0].append(item[0].trainIdx) #best_index의 key point index
+        key_points_index[1].append(inlinear[memory[item[0].queryIdx]][closest]) #closest의 key point index
         is_matched[0][item[0].trainIdx] = idx
-        is_matched[1][inlinear[item[0].queryIdx][closest]] = idx
-        inlinear[item[0].queryIdx][remaining[best_index]] = item[0].trainIdx
-    camera_pose[remaining[best_index]] = RANSAC(key_points[remaining[best_index]], points_3d, key_points_index ,inlinear,is_3d[closest], remaining[best_index])
-    matcher = cv2.BFMatcher().knnMatch(descriptor[closest], descriptor[remaining[best_index]],k=2)
+        is_matched[1][inlinear[memory[item[0].queryIdx]][closest]] = idx
+        inlinear[memory[item[0].queryIdx]][best_index] = item[0].trainIdx
+    camera_pose[best_index] = RANSAC(key_points[best_index], points_3d, key_points_index ,inlinear,is_3d[closest], best_index)
+    matcher = cv2.BFMatcher().knnMatch(descriptor[closest], descriptor[best_index],k=2)
     good = []
     for m,n in matcher:
         if m.distance < ratio_test*n.distance:
@@ -112,15 +116,22 @@ while(len(remaining)>0):
     print("good matching",len(good))
     key_points_index = [[] for i in range(2)]
     is_matched = [{} for i in range(2)]
+    
+    for i in range(len(inlinear)):
+        if best_index in inlinear[i]:
+            del inlinear[i][best_index]
+    
     for idx,item in enumerate(good):
         key_points_index[0].append(item[0].trainIdx)
         key_points_index[1].append(item[0].queryIdx)
         is_matched[0][item[0].trainIdx] = idx
         is_matched[1][item[0].queryIdx] = idx
         
-    points_3d, inlinear,is_3d = Triangulation(key_points, camera_pose, closest, remaining[best_index], key_points_index, is_3d,points_3d,inlinear)
-    matched.append(remaining[best_index])
+    points_3d, inlinear, is_3d = Triangulation(key_points, camera_pose, closest, best_index, key_points_index, is_3d,points_3d,inlinear)
+    matched.append(best_index)
     np.save(infopath + 'New_3D_points.npy',points_3d)
-    del remaining[best_index]
+    remaining.remove(best_index)
 
+np.save(infopath + 'New_3D_points.npy',points_3d)
+np.save(infopath + 'pose.npy',camera_pose)
 #Bundle Adjustment

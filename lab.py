@@ -1,4 +1,4 @@
-import matlab.engine
+#import matlab.engine
 import cv2
 import os
 import numpy as np
@@ -17,9 +17,9 @@ from numpy.linalg import inv
 
 initial_index = [3,4]
 ratio_test = 0.95
-datapath = os.getcwd() + '/Data/'
+datapath = os.getcwd() + '/PA2/Data/'
 #datapath = os.getcwd() + '/Crop/'
-infopath = os.getcwd() + '/two_view_recon_info/'
+infopath = os.getcwd() + '/PA2/two_view_recon_info/'
 
 imglist = [file for file in os.listdir(datapath) if file.endswith('.jpg')]
 imglist.sort()
@@ -33,7 +33,7 @@ matched.append(initial_index[1]-1)
 del remaining[initial_index[1]-1]
 
 
-answer_points_3d = np.load(infopath + '3D_points.npy')
+points_3d = np.load(infopath + '3D_points.npy')
 
 camera_pose = [[] for i in range(len(imglist))]
 camera_pose[3] = np.load(infopath + 'sfm03_camera_pose.npy')
@@ -52,18 +52,19 @@ descriptor[4] = np.load(infopath + 'sfm04_descriptors.npy')
 key_points_index[0] = np.load(infopath + 'sfm03_matched_idx.npy')
 key_points_index[1] = np.load(infopath + 'sfm04_matched_idx.npy')
 pseudo_inlinear = np.load(infopath + 'inlinear.npy')
-answer_inlinear = []
+#answer_inlinear = []
 inlinear = []
-points_3d = []
+#points_3d = []
 
 is_3d = [{} for i in range(len(imglist))]
 camera_matrix = np.loadtxt(datapath + 'intrinsic.txt')
 inv_camera_matrix = inv(camera_matrix)
 
 for i in range(len(pseudo_inlinear)):
-    answer_inlinear.append({3:key_points_index[0][pseudo_inlinear[i]], 4:key_points_index[1][pseudo_inlinear[i]]})
+    inlinear.append({3:key_points_index[0][pseudo_inlinear[i]], 4:key_points_index[1][pseudo_inlinear[i]]})
     is_3d[3][key_points_index[0][pseudo_inlinear[i]]] = i
     is_3d[4][key_points_index[1][pseudo_inlinear[i]]] = i
     
-        
-points_3d, inlinear,is_3d = Triangulation(key_points, camera_pose, 4, 3, key_points_index, is_3d,points_3d,inlinear)
+nn = RANSAC(key_points[4], points_3d, key_points_index ,inlinear, is_3d[4], 4)
+           
+#points_3d, inlinear,is_3d = Triangulation(key_points, camera_pose, 4, 3, key_points_index, is_3d,points_3d,inlinear)
