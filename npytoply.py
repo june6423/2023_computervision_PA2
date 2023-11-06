@@ -3,9 +3,10 @@ from plyfile import PlyData, PlyElement
 
 import os
 infopath = os.getcwd() + '/two_view_recon_info/'
+resultpath = os.getcwd() + '/result/'
 
 points_3d = np.load(infopath + '3D_points.npy')
-new_points_3d = np.load(infopath + '100_result.npy')
+new_points_3d = np.load(resultpath + '100_result.npy')
 
 data = new_points_3d
 

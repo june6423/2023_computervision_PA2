@@ -1,23 +1,20 @@
-#import matlab.engine
 import cv2
 import os
 import numpy as np
-import copy
 
 from functions import *
 from RANSAC import *
 from Triangulation import *
-from Bundle import *
 from func import *
 
+import json
 #import matplotlib.pyplot as plt
-
-#eng = matlab.engine.start_matlab()
 
 initial_index = [3,4]
 ratio_test = 0.95
 datapath = os.getcwd() + '/Data/'
 infopath = os.getcwd() + '/two_view_recon_info/'
+resultpath = os.getcwd() + '/result/'
 
 imglist = [file for file in os.listdir(datapath) if file.endswith('.jpg')]
 imglist.sort()
@@ -79,7 +76,6 @@ while(len(remaining)>0):
         closest = min(matched, key=lambda x: abs(x-remaining[idx]))
         for i in range(len(inlinear)):
             if(closest in inlinear[i]):
-            #closest = min(inlinear[i], key=lambda x: abs(x-remaining[idx]))
                 matched_des.append(descriptor[closest][inlinear[i][closest]]) 
         matched_des = np.array(matched_des)
         matcher = cv2.BFMatcher().knnMatch(matched_des, descriptor[remaining[idx]],k=2)
@@ -108,7 +104,7 @@ while(len(remaining)>0):
             is_matched[1][inlinear[memory[item[0].queryIdx]][closest]] = idx
             inlinear[memory[item[0].queryIdx]][best_index] = item[0].trainIdx
         except:
-            print("error occured on query index",item[0].queryIdx,len(good[best_index]),len(memory))
+            #print("error occured on query index",item[0].queryIdx,len(good[best_index]),len(memory))
             continue
     camera_pose[best_index] = RANSAC(key_points[best_index], points_3d, key_points_index ,inlinear,is_3d[closest], best_index)
     matcher = cv2.BFMatcher().knnMatch(descriptor[closest], descriptor[best_index],k=2)
@@ -133,9 +129,19 @@ while(len(remaining)>0):
         
     points_3d, inlinear, is_3d = Triangulation(key_points, camera_pose, closest, best_index, key_points_index, is_3d,points_3d,inlinear)
     matched.append(best_index)
-    np.save(infopath + 'New_3D_points.npy',points_3d)
+    #np.save(infopath + 'New_3D_points.npy',points_3d)
     remaining.remove(best_index)
 
-np.save(infopath + 'New_3D_points.npy',points_3d)
-np.save(infopath + 'pose.npy',camera_pose)
-#Bundle Adjustment
+np.save(resultpath + '100_result.npy',points_3d)
+np.save(resultpath + '100_result_pose.npy',camera_pose)
+for i in range(len(key_points)):
+    np.save(resultpath + 'keypoints'+str(i)+'.npy',key_points[i])
+
+json_file_name = resultpath+'inlinear_result.json'
+
+inlinear_result = []
+for d in inlinear:
+    inlinear_result.append({int(k):int(v) for k, v in d.items()})
+            
+with open(json_file_name, 'w') as outfile:
+    json.dump(inlinear_result, outfile)

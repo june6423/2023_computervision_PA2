@@ -19,10 +19,12 @@ function [F,J]=JacobiancostE(x, param)
         X_idx = uv{i}(4,:); nXi = size(X_idx, 2);
         R = RotationVector_to_RotationMatrix(Rvec(:,i)); T = Tvec(:,i); Xi = X(:,X_idx);   
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % write code to calculate reprojection errors and store them into
-        % variable F
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        for j = 1:nXi
+            proj = K * (R * Xi(:,j) + T);
+            proj = proj / proj(3);
+            F(count) = uv{i}(1,j) - proj(1);
+            F(count+1) = uv{i}(2,j) - proj(2);
+            count = count + 2;
 
         end
     end
