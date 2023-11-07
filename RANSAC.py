@@ -7,7 +7,7 @@ from numpy.linalg import norm
 from func import *
 
 def RANSAC(keypoint, points_3d, key_points_index, inlinear, is_3d, index):
-    max_iteration = 100
+    max_iteration = 10000
     max_inlier = 0
     max_pose = np.zeros((3, 4))
     threshold = 5e-4

@@ -18,10 +18,10 @@ num_of_image = 15
 datapath = os.getcwd() + '/Data/'
 infopath = os.getcwd() + '/two_view_recon_info/'
 funcpath = os.getcwd() + '/functions/'
-resultpath = os.getcwd() + '/result/'
+resultpath = os.getcwd() + '/result_10000/'
 
-points_3d = np.load(resultpath+ '100_result.npy')
-camera_pose = np.load(resultpath + '100_result_pose.npy')
+points_3d = np.load(resultpath+ '10000_result.npy')
+camera_pose = np.load(resultpath + '10000_result_pose.npy')
 camera_matrix = np.loadtxt(datapath + 'intrinsic.txt')
 
 keypoint = [i for i in range(num_of_image)]

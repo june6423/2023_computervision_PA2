@@ -14,7 +14,7 @@ initial_index = [3,4]
 ratio_test = 0.95
 datapath = os.getcwd() + '/Data/'
 infopath = os.getcwd() + '/two_view_recon_info/'
-resultpath = os.getcwd() + '/result/'
+resultpath = os.getcwd() + '/result_10000/'
 
 imglist = [file for file in os.listdir(datapath) if file.endswith('.jpg')]
 imglist.sort()
@@ -132,8 +132,8 @@ while(len(remaining)>0):
     #np.save(infopath + 'New_3D_points.npy',points_3d)
     remaining.remove(best_index)
 
-np.save(resultpath + '100_result.npy',points_3d)
-np.save(resultpath + '100_result_pose.npy',camera_pose)
+np.save(resultpath + '10000_result.npy',points_3d)
+np.save(resultpath + '10000_result_pose.npy',camera_pose)
 for i in range(len(key_points)):
     np.save(resultpath + 'keypoints'+str(i)+'.npy',key_points[i])
 
