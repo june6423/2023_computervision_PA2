@@ -2,11 +2,13 @@ import numpy as np
 from plyfile import PlyData, PlyElement
 
 import os
-infopath = os.getcwd() + '/two_view_recon_info/'
-resultpath = os.getcwd() + '/result_10000/'
+#infopath = os.getcwd() + '/two_view_recon_info/'
+infopath = os.getcwd() + '/optionsl/'
+#resultpath = os.getcwd() + '/result_10000/'
+resultpath = os.getcwd() + '/result_custom/'
 
-points_3d = np.load(infopath + '3D_points.npy')
-new_points_3d = np.load(resultpath + '10000_result.npy')
+#points_3d = np.load(infopath + '3D_points.npy')
+new_points_3d = np.load(resultpath + 'custom_result.npy')
 
 data = new_points_3d
 
@@ -20,7 +22,7 @@ vertex_element = PlyElement.describe(vertices, 'vertex')
 plydata = PlyData([vertex_element])
 
 # Save the PLY file
-ply_file = '10000_output.ply'
+ply_file = 'custom_output.ply'
 plydata.write(ply_file)
 
 print(f'PLY file saved as {ply_file}')

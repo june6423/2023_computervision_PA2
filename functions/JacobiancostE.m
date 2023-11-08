@@ -20,10 +20,10 @@ function [F,J]=JacobiancostE(x, param)
         R = RotationVector_to_RotationMatrix(Rvec(:,i)); T = Tvec(:,i); Xi = X(:,X_idx);   
         
         for j = 1:nXi
-            proj = K * (R * Xi(:,j) + T);
+            proj = R * Xi(:,j) + T;
             proj = proj / proj(3);
-            F(count) = uv{i}(1,j) - proj(1);
-            F(count+1) = uv{i}(2,j) - proj(2);
+            F(count) = proj(1)-uv{i}(1,j);
+            F(count+1) = proj(2)-uv{i}(2,j);
             count = count + 2;
 
         end

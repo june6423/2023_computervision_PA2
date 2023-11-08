@@ -1,9 +1,9 @@
 function [x_BA] = LM2_iter_dof(x, param)
     
     iter = 0;
-    tolX = 5e-3;   % xÀÇ Á¾·áÇã¿ë¿ÀÂ÷
-    tolFun = 5e-3; % ÇÔ¼ö°ªÀÇ Á¾·áÇã¿ë¿ÀÂ÷
-    tolJ = 1e-5;   % JacobianÀÇ Á¾·áÇã¿ë¿ÀÂ÷
+    tolX = 5e-3;   % xï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    tolFun = 5e-3; % ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    tolJ = 1e-5;   % Jacobianï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     max_iter = 50;    
     x_BA = cell(0,1);
     
@@ -19,14 +19,14 @@ function [x_BA] = LM2_iter_dof(x, param)
         [F,J] = JacobiancostE(x, param); 
         if dof == 1, J(:,dof_idx) = []; end
         
-        before_cost = norm(F)^2;
+        before_cost = norm(F)^2
         
         H = J'*J;
         JtF = J'*F;
         
         if opt==1      % Levenberg - Marquarbt
             if iter==1, lambda = 1e-3; end
-            H_LM = H + lambda*sparse(diag(diag(H)));            
+            H_LM = H + lambda*sparse(diag(diag(H)));       
             %H_LM = H + sparse(1:length(x),1:length(x),lambda,length(x),length(x));
         elseif opt==0  % Levenberg
             if iter==1, lambda = 1e-3*mean(diag(H)); end
@@ -34,7 +34,7 @@ function [x_BA] = LM2_iter_dof(x, param)
         end   
                 
         dp = -H_LM \ JtF;
-        if isnan(sum(dp)) % NaNÀÌ¸é ±×³É ³¡³»ÀÚ
+        if isnan(sum(dp)) % NaNï¿½Ì¸ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             break;
 %             lambda=lambda*10; disp(['lambda : ', num2str(lambda), 'by NaN']);
 %             if opt==1      % Levenberg - Marquarbt
@@ -57,9 +57,9 @@ function [x_BA] = LM2_iter_dof(x, param)
         end
         
         after_F=costE(x_LM, param);
-        after_cost = norm(after_F)^2;
+        after_cost = norm(after_F)^2
         l2_p  = norm(x);
-        l2_dp = norm(dp); %dpÀÇ º¯È­·®    
+        l2_dp = norm(dp); %dpï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½    
             
         if (after_cost < before_cost)
             lambda=lambda*0.1; disp(['lambda : ', num2str(lambda)]);
@@ -86,7 +86,7 @@ function [x_BA] = LM2_iter_dof(x, param)
                 end
                 
                 after_F=costE(x_LM, param);
-                after_cost = norm(after_F)^2;
+                after_cost = norm(after_F)^2
             end
             x = x_LM;
         end        
