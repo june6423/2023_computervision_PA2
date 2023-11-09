@@ -1,5 +1,5 @@
 function [x_BA] = LM2_iter_dof(x, param)
-    
+    x=transpose(x);
     iter = 0;
     tolX = 5e-3;   % x�� ����������
     tolFun = 5e-3; % �Լ����� ����������

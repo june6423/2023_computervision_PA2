@@ -23,6 +23,7 @@ resultpath = os.getcwd() + '/result_10000/'
 points_3d = np.load(resultpath+ '10000_result.npy')
 camera_pose = np.load(resultpath + '10000_result_pose.npy')
 camera_matrix = np.loadtxt(datapath + 'intrinsic.txt')
+#camera_matrix = np.load(datapath + 'intrinsic.npy')
 inv_camera_matrix = inv(camera_matrix)
 
 keypoint = [[] for i in range(num_of_image)]
@@ -64,9 +65,8 @@ for i in range(camera_pose.shape[0]):
 X = np.array(X)
 X = X.flatten()
 points_3d = points_3d.flatten()
-#points_3d = points_3d + np.random.normal(0,1,points_3d.shape)
+points_3d = points_3d + np.random.normal(0,0.5,points_3d.shape)
 X = np.append(X, points_3d)
-X = matlab.double(X)
 
 eng = matlab.engine.start_matlab()
 eng.addpath(funcpath, nargout=0)
@@ -74,9 +74,10 @@ x_BA = eng.LM2_iter_dof(X, param)
 
 eng.quit()
 
-x_BA = np.array(x_BA[6*camera_pose.shape[0]:])
+x_BA = np.array(x_BA[-1])
+x_BA = x_BA[6*camera_pose.shape[0]:]
 x_BA = x_BA.reshape(-1,3)
 points_3d = points_3d.reshape(-1,3)
 
-np.save(resultpath + '100_BA_result.npy', x_BA)
+np.save(resultpath + 'BA_result.npy', x_BA)
 np.save(resultpath + 'noisy_points_3d.npy', points_3d)

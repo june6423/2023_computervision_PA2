@@ -10,11 +10,11 @@ from func import *
 import json
 #import matplotlib.pyplot as plt
 
-initial_index = [11,12]
-ratio_test = 0.75
-datapath = os.getcwd() + '/custom_dataset/'
-infopath = os.getcwd() + '/optional/'
-resultpath = os.getcwd() + '/result_custom/'
+initial_index = [3,4]
+ratio_test = 0.95
+datapath = os.getcwd() + '/Data/'
+infopath = os.getcwd() + '/two_view_recon_info/'
+resultpath = os.getcwd() + '/result_10000/'
 
 imglist = [file for file in os.listdir(datapath) if file.endswith('.jpg')]
 imglist.sort()
@@ -40,10 +40,10 @@ sift = cv2.SIFT_create()
 points_3d = np.load(infopath + '3D_points.npy')
 
 camera_pose = [[] for i in range(len(imglist))]
-#camera_pose[3] = np.load(infopath + 'sfm03_camera_pose.npy')
-#camera_pose[4] = np.load(infopath + 'sfm04_camera_pose.npy')
-camera_pose[11] = np.load(infopath + 'sfm11_camera_pose.npy')
-camera_pose[12] = np.load(infopath + 'sfm12_camera_pose.npy')
+camera_pose[3] = np.load(infopath + 'sfm03_camera_pose.npy')
+camera_pose[4] = np.load(infopath + 'sfm04_camera_pose.npy')
+#camera_pose[11] = np.load(infopath + 'sfm11_camera_pose.npy')
+#camera_pose[12] = np.load(infopath + 'sfm12_camera_pose.npy')
 
 key_points = [[] for i in range(len(imglist))]
 descriptor = [[] for i in range(len(imglist))]
@@ -51,26 +51,26 @@ is_3d = [{} for i in range(len(imglist))]
 is_matched = [{} for i in range(2)]
 key_points_index = [[] for i in range(2)]
 
-""" key_points[3] = np.load(infopath + 'sfm03_keypoints.npy')
+key_points[3] = np.load(infopath + 'sfm03_keypoints.npy')
 key_points[4] = np.load(infopath + 'sfm04_keypoints.npy')
 descriptor[3] = np.load(infopath + 'sfm03_descriptors.npy')
 descriptor[4] = np.load(infopath + 'sfm04_descriptors.npy')
 key_points_index[0] = np.load(infopath + 'sfm03_matched_idx.npy')
-key_points_index[1] = np.load(infopath + 'sfm04_matched_idx.npy') """
+key_points_index[1] = np.load(infopath + 'sfm04_matched_idx.npy')
 
-key_points[11] = np.load(infopath + 'sfm11_keypoints.npy')
+""" key_points[11] = np.load(infopath + 'sfm11_keypoints.npy')
 key_points[12] = np.load(infopath + 'sfm12_keypoints.npy')
 descriptor[11] = np.load(infopath + 'sfm11_descriptors.npy')
 descriptor[12] = np.load(infopath + 'sfm12_descriptors.npy')
 key_points_index[0] = np.load(infopath + 'sfm11_matched_idx.npy')
-key_points_index[1] = np.load(infopath + 'sfm12_matched_idx.npy')
+key_points_index[1] = np.load(infopath + 'sfm12_matched_idx.npy') """
 pseudo_inlinear = np.load(infopath + 'inlinear.npy')
 inlinear = []
 
 for i in range(len(pseudo_inlinear)):
-    inlinear.append({11:key_points_index[0][pseudo_inlinear[i]], 12:key_points_index[1][pseudo_inlinear[i]]})
-    is_3d[11][key_points_index[0][pseudo_inlinear[i]]] = i
-    is_3d[12][key_points_index[1][pseudo_inlinear[i]]] = i
+    inlinear.append({3:key_points_index[0][pseudo_inlinear[i]], 4:key_points_index[1][pseudo_inlinear[i]]})
+    is_3d[3][key_points_index[0][pseudo_inlinear[i]]] = i
+    is_3d[4][key_points_index[1][pseudo_inlinear[i]]] = i
 for idx, item in enumerate(remaining):
     key, descriptor[item] = sift.detectAndCompute(image[item],None)
     for i in range(len(key)):

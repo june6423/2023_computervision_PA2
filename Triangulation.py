@@ -7,9 +7,9 @@ from numpy.linalg import norm
 
 def Triangulation(key_points, camera_pose, closest, cur_index, key_points_index, is_3d,points_3d,inlinear):
     
-    datapath = os.getcwd() + '/custom_dataset/'
-    #camera_matrix = np.loadtxt(datapath + 'intrinsic.txt')
-    camera_matrix = np.load(datapath + 'intrinsic.npy')
+    datapath = os.getcwd() + '/Data/'
+    camera_matrix = np.loadtxt(datapath + 'intrinsic.txt')
+    #camera_matrix = np.load(datapath + 'intrinsic.npy')
     inv_camera_matrix = inv(camera_matrix)
     
     pose1 = camera_pose[cur_index]

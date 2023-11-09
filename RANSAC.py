@@ -14,9 +14,9 @@ def RANSAC(keypoint, points_3d, key_points_index, inlinear, is_3d, index):
     best_inlier = 0
     count = 0
     
-    datapath = os.getcwd() + '/custom_dataset/'
-    #camera_matrix = np.loadtxt(datapath + 'intrinsic.txt')
-    camera_matrix = np.load(datapath + 'intrinsic.npy')
+    datapath = os.getcwd() + '/Data/'
+    camera_matrix = np.loadtxt(datapath + 'intrinsic.txt')
+    #camera_matrix = np.load(datapath + 'intrinsic.npy')
     inv_camera_matrix = inv(camera_matrix)
     
     for iter in range(max_iteration):
@@ -36,7 +36,7 @@ def RANSAC(keypoint, points_3d, key_points_index, inlinear, is_3d, index):
         success, rvec, tvec = cv2.solveP3P(obj_point, img_point,camera_matrix,None,cv2.SOLVEPNP_P3P)
         pose = []
         for idx in range(len(rvec)):
-            rotation = cv2.Rodrigues(rvec[idx])[0] #왜 rotation의 return값으로 3*3과 9*3행렬이 같이 나오지?
+            rotation = cv2.Rodrigues(rvec[idx])[0]
             translation = tvec[idx]
             #if np.any(points_3d.dot(rotation)+translation.T <0):
             #    continue

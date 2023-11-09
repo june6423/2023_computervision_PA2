@@ -20,6 +20,8 @@ Bundle.py : Bundle Adjustment code
 original_3d.ply : ply file of initial 3d points (provided by TA. sfm03 and sfm04 matched)
 10000_output.ply : ply file of output 3d points
 custom_output.ply : ply file of custom dataset 3d points
+10000_BA_output.ply : ply file of optimized 3d points(bundle adjustment)
+noisy_output.ply : ply file of adding noise (10000_output + gaussian noise)
 
 데이터 구조 설명(result_10000 폴더 내부 파일 설명)
 keypoints0.npy : 0번 이미지의 SIFT결과 keypoint를 저장. [x,y]형태의 N*2 배열
