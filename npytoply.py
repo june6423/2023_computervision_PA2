@@ -2,15 +2,15 @@ import numpy as np
 from plyfile import PlyData, PlyElement
 
 import os
-#infopath = os.getcwd() + '/two_view_recon_info/'
-infopath = os.getcwd() + '/optionsl/'
-#resultpath = os.getcwd() + '/result_10000/'
-resultpath = os.getcwd() + '/result_custom/'
+infopath = os.getcwd() + '/two_view_recon_info/'
+#infopath = os.getcwd() + '/optionsl/'
+resultpath = os.getcwd() + '/result_10000/'
+#resultpath = os.getcwd() + '/result_custom/'
 
-#points_3d = np.load(infopath + '3D_points.npy')
-new_points_3d = np.load(resultpath + 'custom_result.npy')
+points_3d = np.load(resultpath + '10000_BA_result.npy')
+#new_points_3d = np.load(resultpath + 'custom_result.npy')
 
-data = new_points_3d
+data = points_3d
 
 
 vertices = np.array([(float(data[i, 0]), float(data[i, 1]), float(data[i, 2])) for i in range(data.shape[0])], dtype=[('x', 'f4'), ('y', 'f4'), ('z', 'f4')])
@@ -22,7 +22,7 @@ vertex_element = PlyElement.describe(vertices, 'vertex')
 plydata = PlyData([vertex_element])
 
 # Save the PLY file
-ply_file = 'custom_output.ply'
+ply_file = 'BA_output.ply'
 plydata.write(ply_file)
 
 print(f'PLY file saved as {ply_file}')

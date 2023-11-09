@@ -12,17 +12,16 @@ from func import *
 import json
 
 from numpy.linalg import inv
-#import matplotlib.pyplot as plt
 
 num_of_image = 15
 
 datapath = os.getcwd() + '/Data/'
 infopath = os.getcwd() + '/two_view_recon_info/'
 funcpath = os.getcwd() + '/functions/'
-resultpath = os.getcwd() + '/result_100/'
+resultpath = os.getcwd() + '/result_10000/'
 
-points_3d = np.load(resultpath+ '100_result.npy')
-camera_pose = np.load(resultpath + '100_result_pose.npy')
+points_3d = np.load(resultpath+ '10000_result.npy')
+camera_pose = np.load(resultpath + '10000_result_pose.npy')
 camera_matrix = np.loadtxt(datapath + 'intrinsic.txt')
 inv_camera_matrix = inv(camera_matrix)
 
@@ -40,9 +39,9 @@ uv = [[] for i in range(num_of_image)]
 
 for i in range(len(inlinear)):
     for k,v in inlinear[i].items():
-        norm = inv_camera_matrix @ np.append(keypoint[int(k)][v],1)
-        uv[int(k)].append(np.array([matlab.double(norm[0]),matlab.double(norm[1]),matlab.double(1),matlab.double(i+1)]))
-        #uv[int(k)].append(np.array([keypoint[int(k)][v][0],keypoint[int(k)][v][1],1,i+1]))
+        #norm = inv_camera_matrix @ np.append(keypoint[int(k)][v],1)
+        #uv[int(k)].append(np.array([matlab.double(norm[0]),matlab.double(norm[1]),matlab.double(1),matlab.double(i+1)]))
+        uv[int(k)].append(np.array([keypoint[int(k)][v][0],keypoint[int(k)][v][1],1,i+1]))
 for i in range(len(uv)):
     uv[i] = np.array(uv[i]).T
     uv[i] = uv[i].squeeze()
